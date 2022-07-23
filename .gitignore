@@ -1,0 +1,11 @@
+*.txt
+.csv
+*.json
+*.bam
+*.bai
+*BQSR*
+*.vcf
+*.gz
+*.tbi
+work/
+
