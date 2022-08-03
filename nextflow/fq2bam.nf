@@ -1,15 +1,17 @@
 
 params.inputFASTQ_1 = null
 params.inputFASTQ_2 = null
-params.sampleName = null
-params.readGroupName = null
-params.platformName = null
 params.inputRefTarball = null
 params.inputKnownSites = null
 params.inputKnownSitesTBI = null
 
+params.sampleName = null
+params.readGroupName = null
+params.platformName = null
+
 params.pbPATH = null
 params.pbLicense = null
+
 params.pbDocker = "parabricks-cloud:latest"
 params.tmpDir = "tmp_fq2bam"
 params.gpuModel = "nvidia-tesla-v100"
@@ -35,9 +37,9 @@ process fq2bam {
     path pbLicense from params.pbLicense
 
     output:
-    path "${sampleName}.pb.bam" into bam_channel
-    path "${sampleName}.pb.bam.bai" into bai_channel
-    path "${sampleName}.pb.recal.txt" into recal_channel
+    path "${sampleName}.pb.bam"
+    path "${sampleName}.pb.bam.bai"
+    path "${sampleName}.pb.BQSR-REPORT.txt"
 
     script:
     """
@@ -46,10 +48,10 @@ process fq2bam {
     time ${pbPATH} fq2bam \
     --tmp-dir ${tmpDir} \
     --in-fq ${inputFASTQ_1} ${inputFASTQ_2} \
-    --ref ${ref_tarball.baseName} \
-    --knownSites ${knownSites}
-    --out-bam ${inputFASTQ_1.basename}.pb.bam \
-    --out-recal-file ${inputFASTQ_1.basename}.pb.BQSR-REPORt.txt \
+    --ref ${inputRefTarball.baseName} \
+    --knownSites ${inputKnownSites} \
+    --out-bam ${inputFASTQ_1.baseName}.pb.bam \
+    --out-recal-file ${inputFASTQ_1.baseName}.pb.BQSR-REPORT.txt \
     --license-file ${pbLicense} 
     """
 }
