@@ -8,4 +8,5 @@
 *.gz
 *.tbi
 work/
+test-data/
 
