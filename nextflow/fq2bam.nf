@@ -37,9 +37,9 @@ process fq2bam {
     path pbLicense from params.pbLicense
 
     output:
-    path "${sampleName}.pb.bam"
-    path "${sampleName}.pb.bam.bai"
-    path "${sampleName}.pb.BQSR-REPORT.txt"
+    path "${inputFASTQ_1.baseName}.pb.bam"
+    path "${inputFASTQ_1.baseName}.pb.bam.bai"
+    path "${inputFASTQ_1.baseName}.pb.BQSR-REPORT.txt"
 
     script:
     """
