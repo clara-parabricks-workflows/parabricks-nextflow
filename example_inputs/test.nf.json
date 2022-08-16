@@ -1,6 +1,0 @@
-{
-    "readsFirst" : "/fastdata/chr22.HG002.hiseqx.pcr-free.30x.R1_1.fastq.gz",
-    "readsSecond" : "/fastdata/chr22.HG002.hiseqx.pcr-free.30x.R1_2.fastq.gz",
-    "ref" : "/home/edawson/refs/chr22.hg38.fa.tar",
-    "license" : "/home/edawson/3.8.0-1/parabricks/license.bin"
-}
