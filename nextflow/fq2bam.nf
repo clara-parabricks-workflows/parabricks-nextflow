@@ -30,6 +30,7 @@ process fq2bam {
     input:
     path inputFASTQ_1 from params.inputFASTQ_1
     path inputFASTQ_2 from params.inputFASTQ_2
+    val inputSampleName from params.sampleName
     path inputRefTarball from params.inputRefTarball
     path inputKnownSites from params.inputKnownSites
     path inputKnownSitesTBI from params.inputKnownSitesTBI
@@ -49,6 +50,7 @@ process fq2bam {
     time ${pbPATH} fq2bam \
     --tmp-dir ${tmpDir} \
     --in-fq ${inputFASTQ_1} ${inputFASTQ_2} \
+    --read-group-sm ${inputSampleName} \
     --ref ${inputRefTarball.baseName} \
     --knownSites ${inputKnownSites} \
     --out-bam ${inputFASTQ_1.baseName}.pb.bam \
