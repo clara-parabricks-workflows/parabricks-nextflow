@@ -24,7 +24,8 @@ params.maxPreemptAttempts = 3
 
 process fq2bam {
     tag "${sample_name}"
-    label (params.GPU == "ON" ? 'with_gpus': 'with_cpus')
+    label 'localGPU'
+    label 'cloud4xT4'
 
     input:
     path inputFASTQ_1 from params.inputFASTQ_1
