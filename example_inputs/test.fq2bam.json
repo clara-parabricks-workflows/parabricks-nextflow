@@ -5,5 +5,7 @@
     "inputKnownSitesTBI" : "/home/$USER/refs/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi",
     "inputRefTarball" : "/home/$USER/parabricks-nextflow/test-data/chr22.hg38.fa.tar",
     "pbPATH" : "/usr/local/parabricks/pbrun",
-    "pbLicense" : "/home/$USER/3.7.0-4/parabricks/license.bin"
+    "pbLicense" : "/home/$USER/3.7.0-4/parabricks/license.bin",
+    "inputSampleName" : "HG002",
+    "tmpDir" : "fq2bam"
 }
