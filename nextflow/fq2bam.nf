@@ -46,7 +46,7 @@ process fq2bam {
     script:
     """
     mkdir -p ${tmpDir} && \
-    tar xf ${inputRefTarball} && \
+    tar xf ${inputRefTarball.Name} && \
     time ${pbPATH} fq2bam \
     --tmp-dir ${tmpDir} \
     --in-fq ${inputFASTQ_1} ${inputFASTQ_2} \
