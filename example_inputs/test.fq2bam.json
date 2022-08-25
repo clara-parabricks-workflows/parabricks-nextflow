@@ -1,11 +1,11 @@
 {
     "inputFASTQ_1" : "/home/$USER/nv/parabricks-nextflow/test-data/hg0002.novaseq.pcr-free.35x.chr22.1.fq.gz",
     "inputFASTQ_2" : "/home/$USER/nv/parabricks-nextflow/test-data/hg0002.novaseq.pcr-free.35x.chr22.2.fq.gz",
-    "inputKnownSites" : "/home/$USER/refs/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz",
+    "inputKnownSitesVCF" : "/home/$USER/refs/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz",
     "inputKnownSitesTBI" : "/home/$USER/refs/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi",
     "inputRefTarball" : "/home/$USER/nv/parabricks-nextflow/test-data/chr22.hg38.fa.tar",
     "pbPATH" : "/usr/local/parabricks/pbrun",
     "pbLicense" : "/home/$USER/3.7.0-4/parabricks/license.bin",
-    "sampleName" : "HG002",
+    "inputSampleName" : "HG002",
     "tmpDir" : "fq2bam"
 }

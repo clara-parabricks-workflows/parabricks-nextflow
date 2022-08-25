@@ -1,60 +1,91 @@
+#!/usr/bin/env nextflow
 
+nextflow.enable.dsl = 2
+
+/**
+ * Clara Parabricks NextFlow
+ * fq2bam.nf
+*/
+
+
+/**
+* Inputs
+*/
 params.inputFASTQ_1 = null
 params.inputFASTQ_2 = null
 params.inputRefTarball = null
-params.inputKnownSites = null
+params.inputKnownSitesVCF = null
 params.inputKnownSitesTBI = null
 
-params.sampleName = null
+params.inputSampleName = null
 params.readGroupName = null
 params.platformName = null
 
-params.pbPATH = null
-params.pbLicense = null
+params.pbPATH = ""
+params.pbLicense = ""
 
-params.pbDocker = "parabricks-cloud:latest"
-params.tmpDir = "tmp_fq2bam"
-params.gpuModel = "nvidia-tesla-v100"
-params.nGPU = 4
-params.nThreads = 32
-params.gbRAM = 120
-params.diskGB = 120
-params.runtimeMinutes = 600
-params.maxPreemptAttempts = 3
+// Dynamic Process configuration not yet implemented.
+// params.pbDocker = "parabricks-cloud:latest"
+// params.tmpDir = "tmp_fq2bam"
+// params.gpuModel = "nvidia-tesla-v100"
+// params.nGPU = 4
+// params.nThreads = 32
+// params.gbRAM = 120
+// params.diskGB = 120
+// params.runtimeMinutes = 600
+// params.maxPreemptAttempts = 3
 
 process fq2bam {
-    tag "${sample_name}"
     label 'localGPU'
     label 'cloud4xT4'
 
     input:
-    path inputFASTQ_1 from params.inputFASTQ_1
-    path inputFASTQ_2 from params.inputFASTQ_2
-    val inputSampleName from params.sampleName
-    path inputRefTarball from params.inputRefTarball
-    path inputKnownSites from params.inputKnownSites
-    path inputKnownSitesTBI from params.inputKnownSitesTBI
-    val pbPATH from params.pbPATH
-    val tmpDir from params.tmpDir
-    path pbLicense from params.pbLicense
+    path inputFASTQ_1
+    path inputFASTQ_2
+    path inputRefTarball
+    path inputKnownSitesVCF
+    path inputKnownSitesTBI
+    val inputSampleName
+    val pbPATH
+    val tmpDir
+    path pbLicense
 
     output:
     path "${inputFASTQ_1.baseName}.pb.bam"
     path "${inputFASTQ_1.baseName}.pb.bam.bai"
     path "${inputFASTQ_1.baseName}.pb.BQSR-REPORT.txt"
 
-    script:
+    shell:
+    // def knownSitesStub = inputKnownSitesVCF ? "--knownSites ${inputKnownSitesVCF"}" : ""
+    // def recalStub = inputKnownSitesVCF ? "--out-recal-file ${inputFASTQ_1.baseName}.pb.BQSR-Report.txt" : ""
+    // def sampleNameStub = inputSampleName ? "--read-group-sm ${inputSampleName}" : ""
+    // def licenseStub = pbLicense ? "--license-file ${pbLicense}" : ""
     """
-    mkdir -p ${tmpDir} && \
-    tar xf ${inputRefTarball.Name} && \
-    time ${pbPATH} fq2bam \
-    --tmp-dir ${tmpDir} \
-    --in-fq ${inputFASTQ_1} ${inputFASTQ_2} \
-    --read-group-sm ${inputSampleName} \
-    --ref ${inputRefTarball.baseName} \
-    --knownSites ${inputKnownSites} \
-    --out-bam ${inputFASTQ_1.baseName}.pb.bam \
-    --out-recal-file ${inputFASTQ_1.baseName}.pb.BQSR-REPORT.txt \
-    --license-file ${pbLicense} 
+    mkdir -p !{tmpDir} && \
+    tar xf !{inputRefTarball.Name} && \
+    time !{pbPATH} fq2bam \
+    --tmp-dir !{tmpDir} \
+    --in-fq !{inputFASTQ_1} !{inputFASTQ_2} \
+    --ref !{inputRefTarball.baseName} \
+    --out-bam !{inputFASTQ_1.baseName}.pb.bam \
+
     """
+
+}
+
+
+workflow ClaraParabricks_fq2bam {
+    fq2bam( inputFASTQ_1=params.inputFASTQ_1,
+            inputFASTQ_2=params.inputFASTQ_2,
+            inputKnownSitesVCF=params.inputKnownSitesVCF,
+            inputKnownSitesTBI=params.inputKnownSitesTBI,
+            inputRefTarball=params.inputRefTarball,
+            inputSampleName=params.inputSampleName,
+            tmpDir=params.tmpDir,
+            pbPATH=params.pbPATH,
+            pbLicense=params.pbLicense)
+}
+
+workflow {
+    ClaraParabricks_fq2bam()
 }
