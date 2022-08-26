@@ -55,34 +55,48 @@ process fq2bam {
     path "${inputFASTQ_1.baseName}.pb.bam.bai"
     path "${inputFASTQ_1.baseName}.pb.BQSR-REPORT.txt"
 
-    shell:
-    // def knownSitesStub = inputKnownSitesVCF ? "--knownSites ${inputKnownSitesVCF"}" : ""
-    // def recalStub = inputKnownSitesVCF ? "--out-recal-file ${inputFASTQ_1.baseName}.pb.BQSR-Report.txt" : ""
+    script:
+    def knownSitesStub = inputKnownSitesVCF ? "--knownSites ${inputKnownSitesVCF}" : ''
+    def recalStub = inputKnownSitesVCF ? "--out-recal-file ${inputFASTQ_1.baseName}.pb.BQSR-REPORT.txt" : ''
     // def sampleNameStub = inputSampleName ? "--read-group-sm ${inputSampleName}" : ""
     // def licenseStub = pbLicense ? "--license-file ${pbLicense}" : ""
     """
-    mkdir -p !{tmpDir} && \
-    tar xf !{inputRefTarball.Name} && \
-    time !{pbPATH} fq2bam \
-    --tmp-dir !{tmpDir} \
-    --in-fq !{inputFASTQ_1} !{inputFASTQ_2} \
-    --ref !{inputRefTarball.baseName} \
-    --out-bam !{inputFASTQ_1.baseName}.pb.bam \
-
+    mkdir -p ${tmpDir} && \
+    tar xf ${inputRefTarball.Name} && \
+    time ${pbPATH} fq2bam \
+    --tmp-dir ${tmpDir} \
+    --in-fq ${inputFASTQ_1} ${inputFASTQ_2} \
+    --ref ${inputRefTarball.baseName} \
+    --out-bam ${inputFASTQ_1.baseName}.pb.bam \
+    ${knownSitesStub} \
+    ${recalStub}
     """
 
 }
 
 
 workflow ClaraParabricks_fq2bam {
+
+/*
+    path inputFASTQ_1
+    path inputFASTQ_2
+    path inputRefTarball
+    path inputKnownSitesVCF
+    path inputKnownSitesTBI
+    val inputSampleName
+    val pbPATH
+    val tmpDir
+    path pbLicense
+*/
+
     fq2bam( inputFASTQ_1=params.inputFASTQ_1,
             inputFASTQ_2=params.inputFASTQ_2,
+            inputRefTarball=params.inputRefTarball,
             inputKnownSitesVCF=params.inputKnownSitesVCF,
             inputKnownSitesTBI=params.inputKnownSitesTBI,
-            inputRefTarball=params.inputRefTarball,
             inputSampleName=params.inputSampleName,
-            tmpDir=params.tmpDir,
             pbPATH=params.pbPATH,
+            tmpDir=params.tmpDir,
             pbLicense=params.pbLicense)
 }
 
