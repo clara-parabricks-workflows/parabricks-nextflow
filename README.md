@@ -116,8 +116,8 @@ tasks.
 
 **Amazon Web Services (AWS) Batch**
 Complete details available [in the AWS Batch User Guide](https://docs.aws.amazon.com/batch/latest/userguide/gpu-jobs.html)
-- Nvidia T4: use instance type `g4dn.12xlarge`
-- Nvidia V100: use instance type `p3.8xlarge` or `p3.16xlarge`
-- Nvidia A10: use instance type `g5.12xlarge`
+- Nvidia T4: add the following stub to your nextflow label: `accelerator = [request: 4, type:'nvidia-tesla-t4']` OR use instance type `g4dn.12xlarge`
+- Nvidia V100: add the following stub to your nextflow label: `accelerator = [request: 4, type:'nvidia-tesla-v100']` OR use instance type `p3.8xlarge` or `p3.16xlarge`
+- Nvidia A10: add the following stub to your nextflow label: `accelerator = [request: 4, type:'nvidia-tesla-a10']` OR use instance type `g5.12xlarge`
 
 
