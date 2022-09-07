@@ -1,0 +1,9 @@
+{
+    "inputBAM" : "/home/$USER/nv/parabricks-nextflow/test-data/hg0002.novaseq.pcr-free.bam",
+    "inputBAI" : "/home/$USER/nv/parabricks-nextflow/test-data/hg0002.novaseq.pcr-free.bam.bai",
+    "inputBQSR" : "/home/$USER/nv/parabricks-nextflow/test-data/hg0002.novaseq.pcr-free.BQSR-REPORT.txt",
+    "inputRefTarball" : "/home/$USER/nv/parabricks-nextflow/test-data/Homo_sapiens_assembly38.fasta.tar",
+    "gvcfMode" : false,
+    "pbPATH" : "/usr/local/parabricks/pbrun",
+    "pbLicense" : "/home/$USER/3.7.0-4/parabricks/license.bin"
+}
