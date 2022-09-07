@@ -32,14 +32,24 @@ Below is an example command line for running the fq2bam.nf script:
 ~/nextflow run \
     -c config/local.nf.conf \
     -params-file example_inputs/test.fq2bam.json \
-    -with-docker 'gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta2' \
-    testfq2b.nf
+    -with-docker 'gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4' \
+    nexflow/fq2bam.nf
 ```
 
 Note the following:
 - The config/local.nf.conf configuration file defines the GPU-enabled local label and should be passed for local runs.
 - The `-with-docker` command is required and should point to a valid Parabricks cloud-compatible Docker container. It must have no Entrypoint (i.e., `ENTRYPOINT bash`) and one should note the path to Parabricks within the container.
 - The `-params-file` argument allows using a JSON stub for program arguments (rather than the command line). We recommend this way of invoking nextflow as it is easier to debug and more amenable to batch processing.
+
+### Running the germline example
+
+```bash
+~/nextflow run \
+    -c config/local.nf.conf \
+    -params-file example_inputs/test.germline.json \
+    -with-docker 'gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4' \
+    nextflow/germline_calling.nf
+```
 
 ### Experimenting with GCP support
 An example config file for Google Cloud Project's Life Sciences Pipelines API (PAPI) is available in `config/gcp.nf.conf`. To run on GCP, you must have a valid project with the Pipelines API enabled and have local application credentials for a service account. You will need to export your GCP project name and credential path into your environment before running, as well as define machine types and corresponding labels on each NextFlow task in your workflow.
