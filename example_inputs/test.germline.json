@@ -1,6 +1,6 @@
 {
-    "inputBAM" : "path/to/sample.bam",
-    "inputBAI" : "path/to/sample.bam.bai",
-    "inputBQSR" : "path/to/sample.BQSR-REPORT.txt",
-    "inputRef" : "path/to/reference.fasta"
+    "inputBAM" : "/path/to/sample_1.fq.pb.bam",
+    "inputBAI" : "/path/to/sample_1.fq.pb.bam.bai",
+    "inputBQSR" : "/path/to/sample_1.fq.pb.BQSR-REPORT.txt",
+    "inputRef" : "/path/to/parabricks_sample/Ref/Homo_sapiens_assembly38.fasta"
 }

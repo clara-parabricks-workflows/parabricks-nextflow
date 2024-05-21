@@ -1,6 +1,6 @@
 {
-    "inputFASTQ_1" : "path/to/sample_1.fq.gz",
-    "inputFASTQ_2" : "path/to/sample_2.fq.gz",
-    "inputRef" : "path/to/reference.fasta", 
-    "inputKnownSitesVCF" : "path/to/reference.known_indels.vcf.gz"
+    "inputFASTQ_1" : "/path/to/parabricks_sample/Data/sample_1.fq.gz",
+    "inputFASTQ_2" : "/path/to/parabricks_sample/Data/sample_2.fq.gz",
+    "inputRef" : "/path/to/parabricks_sample/Ref/Homo_sapiens_assembly38.fasta", 
+    "inputKnownSitesVCF" : "/path/to/parabricks_sample/Ref/Homo_sapiens_assembly38.known_indels.vcf.gz"
 }
