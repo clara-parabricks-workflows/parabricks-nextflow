@@ -1,57 +1,67 @@
-Parabricks-NextFlow
--------------------
-August 2022
+# Parabricks NextFlow Workflows 
 
-# Overview
-This repo contains experimental code for running Nvidia Clara Parabricks in NextFlow.
+This repo contains example code for running NVIDIA Parabricks using NextFlow. The examples here are minimal and are meant as a starting point to show users how to connect Parabricks and NextFlow. 
 
+The two example workflows are: 
+
+1. Alignment using FQ2BAM
+2. Germline Variant Calling using Haplotype and DeepVariant
 
 # Getting Started
-After cloning this repository, you'll need a valid parabricks installation (including a license) as 
-well as a Parabricks cloud-compatible docker container to run. In addition, you should have at least one
-Parabricks compatible GPU, 12 CPU cores, and 64 GB of RAM to expect to be able to test. Two GPUs are required
-for running Parabricks in production.
 
+For hardware requirements, see the [Parabricks documentation](https://docs.nvidia.com/clara/parabricks/latest/gettingstarted.html#hardware-requirementss). 
 
-## Set up and environment
-Parabricks-nextflow requires the following dependencies:
+The software requirements are: 
+
 - Docker
 - nvidia-docker
 - NextFlow
 
-After installing these tools, you will need a cloud-compatible Parabricks container and a Parabricks license.
-Please contact Nvidia for help acquiring these.
+An example dataset with all the necessary files to run these examples can be found at 
 
-## Running fq2bam locally
+# Running Alignment using FQ2BAM 
 
-The Parabricks fq2bam tool is an accelerated BWA mem implementation. The tool also includes BAM sorting, duplicate marking, and optionally Base Quality Score Recalibration (BQSR). The `fq2bam.nf` script in this repository demonstrates how to run this tool with a set of input reads, producing a BAM file, its BAI index and a BQSR report for use with HaplotypeCaller.
+The [Parabricks fq2bam tool](https://docs.nvidia.com/clara/parabricks/latest/documentation/tooldocs/man_fq2bam.html#man-fq2bam) is an accelerated BWA mem implementation. The tool also includes BAM sorting, duplicate marking, and optionally Base Quality Score Recalibration (BQSR). 
 
-Below is an example command line for running the fq2bam.nf script:
+The `fq2bam.nf` script in this repository demonstrates how to run this tool with a set of input reads, producing a BAM file, its BAI index and a BQSR report for use with HaplotypeCaller.
+
+Below is an example command line for running the `fq2bam.nf` script:
 
 ```bash
-~/nextflow run \
+nextflow run \
     -c config/local.nf.conf \
     -params-file example_inputs/test.fq2bam.json \
-    -with-docker 'gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4' \
     nexflow/fq2bam.nf
 ```
 
-Note the following:
-- The config/local.nf.conf configuration file defines the GPU-enabled local label and should be passed for local runs.
-- The `-with-docker` command is required and should point to a valid Parabricks cloud-compatible Docker container. It must have no Entrypoint (i.e., `ENTRYPOINT bash`) and one should note the path to Parabricks within the container.
-- The `-params-file` argument allows using a JSON stub for program arguments (rather than the command line). We recommend this way of invoking nextflow as it is easier to debug and more amenable to batch processing.
+| Input File | Purpose |
+| -------- | ------- |
+| `local.nf.conf` | Where the Docker container is defined. See the [NGC Registry](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara/containers/clara-parabricks) for the latest version. They do not require an account to view or download. |
+| `test.fq2bam.json` | Where the input data paths are defined. Check that the paths are correct before running, as the exact path will be different for everyone. Use absolute paths only. |
+| `fq2bam.nf` | The NextFlow file with the workflow definition. |
 
-### Running the germline example
+# Running Germline Variant Calling
+
+[Parabricks HaplotypeCaller](https://docs.nvidia.com/clara/parabricks/latest/documentation/tooldocs/man_haplotypecaller.html#man-haplotypecaller) and [Parabricks DeepVaraiant](https://docs.nvidia.com/clara/parabricks/latest/documentation/tooldocs/man_deepvariant.html#man-deepvariant) are GPU accelerated versions of germline variant callers. 
+
+The `germline.nf` script in this repository demonstrates how to run these tools back to back with a set of input bams, producing a VCF file each. 
+
+Below is an example command line for running the `germline.nf` script:
 
 ```bash
 ~/nextflow run \
     -c config/local.nf.conf \
     -params-file example_inputs/test.germline.json \
-    -with-docker 'gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4' \
-    nextflow/germline_calling.nf
+    nextflow/germline.nf
 ```
 
-### Experimenting with GCP support
+| Input File | Purpose |
+| -------- | ------- |
+| `local.nf.conf` | Where the Docker container is defined. See the [NGC Registry](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara/containers/clara-parabricks) for the latest version. They do not require an account to view or download. |
+| `test.germline.json` | Where the input data paths are defined. Check that the paths are correct before running, as the exact path will be different for everyone. Use absolute paths only. |
+| `germline.nf` | The NextFlow file with the workflow definition. |
+
+# (Deprecated) Experimenting with GCP support
 An example config file for Google Cloud Project's Life Sciences Pipelines API (PAPI) is available in `config/gcp.nf.conf`. To run on GCP, you must have a valid project with the Pipelines API enabled and have local application credentials for a service account. You will need to export your GCP project name and credential path into your environment before running, as well as define machine types and corresponding labels on each NextFlow task in your workflow.
 
 
