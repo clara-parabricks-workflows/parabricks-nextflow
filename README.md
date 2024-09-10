@@ -1,6 +1,6 @@
 # Parabricks NextFlow Workflows 
 
-This repo contains example code for running NVIDIA Parabricks using NextFlow. The examples here are minimal and are meant as a starting point to show users how to connect Parabricks and NextFlow. 
+This repo contains example code for running NVIDIA Parabricks using NextFlow. The examples here are minimal and are meant as a starting point to show users how to connect Parabricks and NextFlow.  
 
 The two example workflows are: 
 
