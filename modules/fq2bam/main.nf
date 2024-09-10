@@ -1,8 +1,4 @@
-#!/usr/bin/env nextflow
-
-nextflow.enable.dsl = 2
-
-process fq2bam {
+process PARABRICKS_FQ2BAM {
 
     input:
     path inputFASTQ_1
@@ -27,17 +23,4 @@ process fq2bam {
     ${knownSitesStub} \
     ${recalStub} --low-memory
     """
-}
-
-workflow Parabricks_fq2bam {
-    fq2bam(
-        inputFASTQ_1=params.inputFASTQ_1,
-        inputFASTQ_2=params.inputFASTQ_2,
-        inputRef=params.inputRef, 
-        inputKnownSitesVCF=params.inputKnownSitesVCF
-    )
-}
-
-workflow {
-    Parabricks_fq2bam()
 }

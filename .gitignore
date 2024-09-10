@@ -9,6 +9,6 @@
 *.tbi
 work/
 test-data/
-.nextflow
+.nextflow*
 *.swp
 *.log
