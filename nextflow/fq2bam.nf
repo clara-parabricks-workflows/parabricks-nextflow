@@ -25,11 +25,11 @@ process fq2bam {
     --ref ${inputRef} \
     --out-bam ${inputFASTQ_1.baseName}.pb.bam \
     ${knownSitesStub} \
-    ${recalStub}
+    ${recalStub} --low-memory
     """
 }
 
-workflow ClaraParabricks_fq2bam {
+workflow Parabricks_fq2bam {
     fq2bam(
         inputFASTQ_1=params.inputFASTQ_1,
         inputFASTQ_2=params.inputFASTQ_2,
@@ -39,5 +39,5 @@ workflow ClaraParabricks_fq2bam {
 }
 
 workflow {
-    ClaraParabricks_fq2bam()
+    Parabricks_fq2bam()
 }

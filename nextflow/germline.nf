@@ -44,7 +44,7 @@ process deepvariant {
     """
 }
 
-workflow ClaraParabricks_Germline {
+workflow Parabricks_Germline {
     haplotypecaller(
         inputBAM=params.inputBAM,
         inputBAI=params.inputBAI,
@@ -59,5 +59,5 @@ workflow ClaraParabricks_Germline {
 }
 
 workflow {
-    ClaraParabricks_Germline()
+    Parabricks_Germline()
 }

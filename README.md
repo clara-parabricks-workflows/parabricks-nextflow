@@ -15,7 +15,7 @@ The software requirements are:
 
 - Docker
 - nvidia-docker
-- NextFlow
+- [NextFlow](https://www.nextflow.io/docs/latest/install.html#install-nextflow)
 
 An example dataset with all the necessary files to run these examples can be found at 
 
