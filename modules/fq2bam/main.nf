@@ -1,22 +1,36 @@
 process PARABRICKS_FQ2BAM {
+    tag "$meta.id"
+    accelerator 1
 
     input:
-    path inputFASTQ_1
-    path inputFASTQ_2
+    tuple val(meta), path(reads)
     path index 
     tuple path(fasta), path(fai), path(genome_file), path(chrom_sizes), path(genome_dict)
     path inputKnownSitesVCF
 
     output:
-    path "${inputFASTQ_1.baseName}.pb.bam"
-    path "${inputFASTQ_1.baseName}.pb.bam.bai"
-    path "${inputFASTQ_1.baseName}.pb.BQSR-REPORT.txt"
+    tuple val(meta), path("*.bam"), path("*.bai"), emit: bam_bai
+    tuple val(meta), path("*.log"), emit: log
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
-    def knownSitesStub = inputKnownSitesVCF ? "--knownSites ${inputKnownSitesVCF}" : ''
-    def recalStub = inputKnownSitesVCF ? "--out-recal-file ${inputFASTQ_1.baseName}.pb.BQSR-REPORT.txt" : ''
+    def args = task.ext.args ?: ''
+    def prefix = meta.prefix ? "${meta.prefix}" : "${meta.id}"
+    def read_group = meta.read_group ? "${meta.read_group}" : "RG"
+    def platform = meta.platform ? "${meta.platform}" : "PL"
+    def platform_unit = meta.read_group ? "${meta.read_group}" : "RG"
+    def sample = meta.sample ? "${meta.sample}" : "SM"
+    def read_group_string = "@RG\\tID:$read_group\\tLB:$sample\\tPL:$platform\\tSM:$sample\\tPU:$platform_unit"
+
+    def in_fq_command = meta.single_end ? "--in-se-fq $reads \"$read_group_string\"" : "--in-fq $reads \"$read_group_string\""
 
     """
+    logfile=run.log
+    exec > >(tee \$logfile)
+    exec 2>&1
+
     INDEX=`find -L ./ -name "*.amb" | sed 's/.amb//'`
     # index and fasta need to be in the same dir as files and not symlinks
     # and have the same base name for pbrun to function
@@ -29,11 +43,15 @@ process PARABRICKS_FQ2BAM {
     cp \$INDEX.pac \$FASTA_PATH.pac
     cp \$INDEX.sa \$FASTA_PATH.sa
 
-    pbrun fq2bam \
-    --in-fq ${inputFASTQ_1} ${inputFASTQ_2} \
-    --ref $fasta \
-    --out-bam ${inputFASTQ_1.baseName}.pb.bam \
-    ${knownSitesStub} \
-    ${recalStub} --low-memory
+    echo "pbrun fq2bam --ref $fasta $in_fq_command --read-group-sm $sample --out-bam ${prefix}.bam --num-gpus $task.accelerator.request $args"
+
+    pbrun \\
+        fq2bam \\
+        --ref $fasta \\
+        $in_fq_command \\
+        --read-group-sm $sample \\
+        --out-bam ${prefix}.bam \\
+        --num-gpus $task.accelerator.request \\
+        $args
     """
 }
