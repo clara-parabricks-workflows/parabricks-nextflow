@@ -1,6 +1,5 @@
 process PARABRICKS_FQ2BAM {
     tag "$meta.id"
-    label 'process_high'
     accelerator 1
 
     input:
@@ -12,6 +11,9 @@ process PARABRICKS_FQ2BAM {
     output:
     tuple val(meta), path("*.bam"), path("*.bai"), emit: bam_bai
     tuple val(meta), path("*.log"), emit: log
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
