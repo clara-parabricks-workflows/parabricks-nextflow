@@ -16,6 +16,8 @@ include { PARABRICKS_DEEPVARIANT } from './modules/deepvariant/main'
 
 def model_file = params.model_file ? file(params.model_file, checkIfExists: true) : [] 
 def interval_bed = params.interval_bed ? file(params.interval_bed, checkIfExists: true) : [] 
+def known_sites = params.known_sites ? file(params.known_sites, checkIfExists: true) : [] 
+def proposed_variants = params.proposed_variants ? file(params.proposed_variants, checkIfExists: true) : [] 
 
 // Check input path parameters to see if they exist
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
@@ -45,7 +47,8 @@ workflow {
         ch_fastq,
         params.bwa_index,
         ch_genome,
-        params.inputKnownSitesVCF
+        known_sites,
+        interval_bed
     )
 
     // get bam ch
@@ -56,7 +59,8 @@ workflow {
         ch_bam_bai,
         ch_genome,
         model_file,
-        interval_bed
+        interval_bed,
+        proposed_variants
     )
 }
 
