@@ -7,6 +7,7 @@ process PARABRICKS_DEEPVARIANT {
     tuple path(fasta), path(fai), path(genome_file), path(chrom_sizes), path(genome_dict)
     path model_file
     path interval_bed
+    path proposed_variants
 
     output:
     tuple val(meta), path("*.vcf"), emit: vcf
@@ -18,16 +19,16 @@ process PARABRICKS_DEEPVARIANT {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.suffix ? "${meta.id}${task.ext.suffix}" : "${meta.id}"
-    def interval_file_option = interval_bed ? interval_bed.collect{"--interval-file $it"}.join(' ') : ""
-    def model_command = model_file ? "--pb-model-file $model_file" : ""
+    def model_file_option = model_file ? "--pb-model-file $model_file" : ""
+    def proposed_variants_option = proposed_variants ? "--proposed-variants $proposed_variants" : ""
+    def interval_file_option = interval_bed ? "--interval-file $interval_bed" : ""
     
-    // def copy_index_command = input_index ? "cp -L $input_index `readlink -f $input`.bai" : ""
     """
     logfile=run.log
     exec > >(tee \$logfile)
     exec 2>&1
 
-    echo "pbrun deepvariant --ref $fasta --in-bam $input --out-variants ${prefix}.vcf --num-gpus $task.accelerator.request ${interval_file_option} ${model_command} $args"
+    echo "pbrun deepvariant --ref $fasta --in-bam $input --out-variants ${prefix}.vcf --num-gpus $task.accelerator.request ${interval_file_option} ${proposed_variants_option} ${model_file_option} $args"
 
     pbrun \\
         deepvariant \\
@@ -36,7 +37,8 @@ process PARABRICKS_DEEPVARIANT {
         --out-variants ${prefix}.output.vcf \\
         --num-gpus $task.accelerator.request \\
         ${interval_file_option} \\
-        ${model_command} \\
+        ${proposed_variants_option} \\
+        ${model_file_option} \\
         $args
     """
 }

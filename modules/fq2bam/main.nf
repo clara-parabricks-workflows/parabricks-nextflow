@@ -6,11 +6,14 @@ process PARABRICKS_FQ2BAM {
     tuple val(meta), path(reads)
     path index 
     tuple path(fasta), path(fai), path(genome_file), path(chrom_sizes), path(genome_dict)
-    path inputKnownSitesVCF
+    path known_sites
+    path interval_bed
 
     output:
     tuple val(meta), path("*.bam"), path("*.bai"), emit: bam_bai
     tuple val(meta), path("*.log"), emit: log
+    tuple val(meta), path("*.txt"), emit: recal 
+    tuple val(meta), path("qc_metrics/"), emit: qc_metrics
 
     when:
     task.ext.when == null || task.ext.when
@@ -25,6 +28,9 @@ process PARABRICKS_FQ2BAM {
     def read_group_string = "@RG\\tID:$read_group\\tLB:$sample\\tPL:$platform\\tSM:$sample\\tPU:$platform_unit"
 
     def in_fq_command = meta.single_end ? "--in-se-fq $reads \"$read_group_string\"" : "--in-fq $reads \"$read_group_string\""
+    def known_sites_option = known_sites ? "--knownSites $known_sites --out-recal-file ${prefix}.recal.txt" : ""
+    def interval_file_option = interval_bed ? "--interval-file $interval_bed" : ""
+    def out_qc_metrics_option = "--out-qc-metrics-dir qc_metrics"
 
     """
     logfile=run.log
@@ -43,7 +49,7 @@ process PARABRICKS_FQ2BAM {
     cp \$INDEX.pac \$FASTA_PATH.pac
     cp \$INDEX.sa \$FASTA_PATH.sa
 
-    echo "pbrun fq2bam --ref $fasta $in_fq_command --read-group-sm $sample --out-bam ${prefix}.bam --num-gpus $task.accelerator.request $args"
+    echo "pbrun fq2bam --ref $fasta $in_fq_command --read-group-sm $sample --out-bam ${prefix}.bam --num-gpus $task.accelerator.request ${interval_file_option} ${known_sites_option} ${out_qc_metrics_option} $args"
 
     pbrun \\
         fq2bam \\
@@ -52,6 +58,9 @@ process PARABRICKS_FQ2BAM {
         --read-group-sm $sample \\
         --out-bam ${prefix}.bam \\
         --num-gpus $task.accelerator.request \\
+        ${interval_file_option} \\
+        ${known_sites_option} \\
+        ${out_qc_metrics_option} \\
         $args
     """
 }
