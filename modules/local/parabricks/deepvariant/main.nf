@@ -3,9 +3,9 @@ process PARABRICKS_DEEPVARIANT {
     label 'gpu'
 
     accelerator = 4 //, type: 'nvidia-tesla-k80'
-    cpus = 32
-    memory = 64.GB
-    time = 6.h
+    cpus = 48
+    memory = 192.GB
+    time = 1.h
     maxRetries = 3
     
     container "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
