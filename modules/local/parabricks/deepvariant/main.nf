@@ -3,8 +3,8 @@ process PARABRICKS_DEEPVARIANT {
     label 'gpu'
 
     accelerator = 4 //, type: 'nvidia-tesla-k80'
-    cpus = 48
-    memory = 192.GB
+    cpus = 46
+    memory = 188.GB
     time = 1.h
     maxRetries = 3
     

@@ -3,11 +3,11 @@ process PARABRICKS_FQ2BAM {
     label 'gpu'
 
     accelerator = 4 //, type: 'nvidia-tesla-k80'
-    cpus = 48
-    memory = 192.GB
+    cpus = 46
+    memory = 188.GB
     time = 2.h
     maxRetries = 3
-        
+
     container "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
 
     input:
