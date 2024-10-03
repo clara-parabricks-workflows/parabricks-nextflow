@@ -2,6 +2,8 @@ process PARABRICKS_DEEPVARIANT {
     tag "$meta.id"
     label 'process_high'
 
+    accelerator 1
+
     container "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
 
     input:

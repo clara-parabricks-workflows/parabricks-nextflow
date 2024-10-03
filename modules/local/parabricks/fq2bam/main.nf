@@ -2,9 +2,9 @@ process PARABRICKS_FQ2BAM {
     tag "$meta.id"
     label 'process_high'
 
-    container "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
+    accelerator 1
 
-    //--in-fq r1 r2 --in-fq r1 r2 
+    container "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
 
     input:
     tuple val(meta), val(read_groups), path ( r1_fastq, stageAs: "?/*"), path ( r2_fastq, stageAs: "?/*"), path(interval_file)
