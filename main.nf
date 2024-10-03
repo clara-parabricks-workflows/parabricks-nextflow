@@ -68,7 +68,7 @@ workflow {
     .groupTuple()
     .map { grouped_meta, meta, r1_fastq, r2_fastq ->
         // Add the single interval_bed after grouping
-        def interval_file = params.interval_bed ? params.interval_bed : null
+        def interval_file = params.interval_bed ? file(params.interval_bed, checkIfExists: true) : [] 
 
         return [grouped_meta, meta, r1_fastq, r2_fastq, interval_file]
     }
@@ -86,7 +86,7 @@ workflow {
     ch_bam_bai = PARABRICKS_FQ2BAM.out.bam
         .join(PARABRICKS_FQ2BAM.out.bai, by: [0])
         .map {meta, bam, bai ->
-            def interval_file = params.interval_bed ? params.interval_bed : null
+            def interval_file = params.interval_bed ? file(params.interval_bed, checkIfExists: true) : [] 
             return [meta, bam, bai, interval_file]
         }
         .set { ch_bam_bai_interval }

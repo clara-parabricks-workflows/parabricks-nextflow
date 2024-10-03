@@ -9,7 +9,7 @@ process PARABRICKS_FQ2BAM {
     input:
     tuple val(meta), val(read_groups), path ( r1_fastq, stageAs: "?/*"), path ( r2_fastq, stageAs: "?/*"), path(interval_file)
     tuple path(fasta), path(fai)
-    tuple path(index)
+    path index 
     path known_sites
 
     output:
@@ -31,9 +31,11 @@ process PARABRICKS_FQ2BAM {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     def in_fq_command = meta.single_end ? "--in-se-fq $r1_fastq" : "--in-fq $r1_fastq $r2_fastq"
-    def known_sites_command = known_sites ? known_sites.collect{"--knownSites $it"}.join(' ') : ""
+    def known_sites_command = known_sites ? (known_sites instanceof List ? known_sites.collect { "--knownSites $it" }.join(' ') : "--knownSites ${known_sites}") : ""
     def known_sites_output = known_sites ? "--out-recal-file ${prefix}.table" : ""
-    def interval_file_command = interval_file ? interval_file.collect{"--interval-file $it"}.join(' ') : ""
+    def interval_file_command = interval_file ? (interval_file instanceof List ? interval_file.collect { "--interval-file $it" }.join(' ') : "--interval-file ${interval_file}") : ""
+
+
     """
 
     INDEX=`find -L ./ -name "*.amb" | sed 's/\\.amb\$//'`
@@ -65,9 +67,10 @@ process PARABRICKS_FQ2BAM {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     def in_fq_command = meta.single_end ? "--in-se-fq $r1_fastq" : "--in-fq $r1_fastq $r2_fastq"
-    def known_sites_command = known_sites ? known_sites.collect{"--knownSites $it"}.join(' ') : ""
+    def known_sites_command = known_sites ? (known_sites instanceof List ? known_sites.collect { "--knownSites $it" }.join(' ') : "--knownSites ${known_sites}") : ""
     def known_sites_output = known_sites ? "--out-recal-file ${prefix}.table" : ""
-    def interval_file_command = interval_file ? interval_file.collect{"--interval-file $it"}.join(' ') : ""
+    def interval_file_command = interval_file ? (interval_file instanceof List ? interval_file.collect { "--interval-file $it" }.join(' ') : "--interval-file ${interval_file}") : ""
+
     def metrics_output_command = args = "--out-duplicate-metrics duplicate-metrics.txt" ? "touch duplicate-metrics.txt" : ""
     def known_sites_output_command = known_sites ? "touch ${prefix}.table" : ""
     def qc_metrics_output_command = args = "--out-qc-metrics-dir qc_metrics " ? "mkdir qc_metrics && touch qc_metrics/alignment.txt" : ""
