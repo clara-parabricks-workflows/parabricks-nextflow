@@ -4,7 +4,7 @@ process PARABRICKS_FQ2BAM {
 
     accelerator = 4 //, type: 'nvidia-tesla-k80'
     cpus = 46
-    memory = 188.GB
+    memory = 186.GB
     time = 2.h
     maxRetries = 3
 
