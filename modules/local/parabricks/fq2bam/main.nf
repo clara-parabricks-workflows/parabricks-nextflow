@@ -4,10 +4,12 @@ process PARABRICKS_FQ2BAM {
 
     container "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
 
+    //--in-fq r1 r2 --in-fq r1 r2 
+
     input:
-    tuple val(meta), path(reads), path(interval_file)
-    tuple val(meta2), path(fasta), path(fai)
-    tuple val(meta3), path(index)
+    tuple val(meta), val(read_groups), path ( r1_fastq, stageAs: "?/*"), path ( r2_fastq, stageAs: "?/*"), path(interval_file)
+    tuple path(fasta), path(fai)
+    tuple path(index)
     path known_sites
 
     output:
@@ -28,7 +30,7 @@ process PARABRICKS_FQ2BAM {
     }
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def in_fq_command = meta.single_end ? "--in-se-fq $reads" : "--in-fq $reads"
+    def in_fq_command = meta.single_end ? "--in-se-fq $r1_fastq" : "--in-fq $r1_fastq $r2_fastq"
     def known_sites_command = known_sites ? known_sites.collect{"--knownSites $it"}.join(' ') : ""
     def known_sites_output = known_sites ? "--out-recal-file ${prefix}.table" : ""
     def interval_file_command = interval_file ? interval_file.collect{"--interval-file $it"}.join(' ') : ""
@@ -62,7 +64,7 @@ process PARABRICKS_FQ2BAM {
     }
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def in_fq_command = meta.single_end ? "--in-se-fq $reads" : "--in-fq $reads"
+    def in_fq_command = meta.single_end ? "--in-se-fq $r1_fastq" : "--in-fq $r1_fastq $r2_fastq"
     def known_sites_command = known_sites ? known_sites.collect{"--knownSites $it"}.join(' ') : ""
     def known_sites_output = known_sites ? "--out-recal-file ${prefix}.table" : ""
     def interval_file_command = interval_file ? interval_file.collect{"--interval-file $it"}.join(' ') : ""
