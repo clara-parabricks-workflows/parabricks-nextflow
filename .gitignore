@@ -1,6 +1,5 @@
 *.txt
 .csv
-*.json
 *.bam
 *.bai
 *BQSR*
