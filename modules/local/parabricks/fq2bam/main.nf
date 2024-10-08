@@ -37,8 +37,9 @@ process PARABRICKS_FQ2BAM {
     """
 
     INDEX=`find -L ./ -name "*.amb" | sed 's/\\.amb\$//'`
-    mv $fa \$INDEX
-    mv $fai \$INDEX
+    echo \$INDEX
+    mv $fa \$INDEX/.
+    mv $fai \$INDEX/.
     
     pbrun \\
         fq2bam \\
