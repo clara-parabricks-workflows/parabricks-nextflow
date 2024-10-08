@@ -28,7 +28,17 @@ process PARABRICKS_FQ2BAM {
     }
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def in_fq_command = meta.single_end ? "--in-se-fq $r1_fastq" : "--in-fq $r1_fastq $r2_fastq"
+
+    def in_fq_command = meta.single_end 
+    ? (r1_fastq instanceof List 
+        ? r1_fastq.collect { "--in-se-fq $it" }.join(' ') 
+        : "--in-se-fq ${r1_fastq}"
+      )
+    : (r1_fastq instanceof List && r2_fastq instanceof List
+        ? (r1_fastq.indexed().collect { idx, r1 -> "--in-fq $r1 ${r2_fastq[idx]}" }).join(' ')
+        : "--in-fq ${r1_fastq} ${r2_fastq}"
+      )
+
     def known_sites_command = known_sites ? (known_sites instanceof List ? known_sites.collect { "--knownSites $it" }.join(' ') : "--knownSites ${known_sites}") : ""
     def known_sites_output = known_sites ? "--out-recal-file ${prefix}.table" : ""
     def interval_file_command = interval_file ? (interval_file instanceof List ? interval_file.collect { "--interval-file $it" }.join(' ') : "--interval-file ${interval_file}") : ""
