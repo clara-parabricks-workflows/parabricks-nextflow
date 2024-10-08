@@ -6,7 +6,7 @@ process PARABRICKS_FQ2BAM {
 
     input:
     tuple val(meta), val(read_groups), path ( r1_fastq, stageAs: "?/*"), path ( r2_fastq, stageAs: "?/*"), path(interval_file)
-    tuple path(fasta), path(fai)
+    tuple path(fa), path(fai)
     path index 
     path known_sites
 
@@ -37,8 +37,9 @@ process PARABRICKS_FQ2BAM {
     """
 
     INDEX=`find -L ./ -name "*.amb" | sed 's/\\.amb\$//'`
-    mv $fasta \$INDEX
-
+    mv $fa \$INDEX
+    mv $fai \$INDEX
+    
     pbrun \\
         fq2bam \\
         --ref \$INDEX \\
