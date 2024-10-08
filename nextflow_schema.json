@@ -17,6 +17,9 @@
         "igenomes_base": {
           "type": "string",
           "default": "s3://ngi-igenomes/igenomes"
+        },
+        "igenomes_ignore": {
+          "type": "boolean"
         }
       },
       "required": ["genome"]
@@ -58,8 +61,7 @@
           "type": "string"
         },
         "known_sites": {
-          "type": "string",
-          "default": "[]"
+          "type": "string"
         },
         "proposed_variants": {
           "type": "string"
