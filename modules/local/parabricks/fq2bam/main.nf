@@ -34,8 +34,7 @@ process PARABRICKS_FQ2BAM {
     def interval_file_command = interval_file ? (interval_file instanceof List ? interval_file.collect { "--interval-file $it" }.join(' ') : "--interval-file ${interval_file}") : ""
 
     //Example 2: --in-fq sampleX_1_1.fastq.gz sampleX_1_2.fastq.gz "@RGtID:footLB:lib1tPL:bartSM:sampletPU:unit1" --in-fq sampleX_2_1.fastq.gz sampleX_2_2.fastq.gz "@RGtID:foo2tLB:lib1tPL:bartSM:sampletPU:unit2" (edited) 
-
-    def readgroups_string = read_group.collect { rg -> "@RG\\tID:${rg.read_group}__${rg.sample}\\tSM:${rg.sample}\\tPL:${rg.platform}\\tLB:${rg.sample}" }
+    def readgroups_string = read_group.collect { rg -> "@RG\\tID:${rg.read_group}__${rg.sample}\\tSM:${rg.sample}\\tPL:${rg.platform}\\tLB:${rg.sample}\\tPU:${rg.read_group}" }
 
     def in_fq_command = meta.single_end 
         ? (r1_fastq instanceof List 
@@ -103,7 +102,7 @@ process PARABRICKS_FQ2BAM {
     def known_sites_output = known_sites ? "--out-recal-file ${prefix}.table" : ""
     def interval_file_command = interval_file ? (interval_file instanceof List ? interval_file.collect { "--interval-file $it" }.join(' ') : "--interval-file ${interval_file}") : ""
 
-    def readgroups_string = read_group.collect { rg -> "@RG\\tID:${rg.read_group}__${rg.sample}\\tSM:${rg.sample}\\tPL:${rg.platform}\\tLB:${rg.sample}" }
+    def readgroups_string = read_group.collect { rg -> "@RG\\tID:${rg.read_group}__${rg.sample}\\tSM:${rg.sample}\\tPL:${rg.platform}\\tLB:${rg.sample}\\tPU:${rg.read_group}" }
 
     def in_fq_command = meta.single_end 
         ? (r1_fastq instanceof List 
