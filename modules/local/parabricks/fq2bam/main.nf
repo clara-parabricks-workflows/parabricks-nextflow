@@ -6,7 +6,7 @@ process PARABRICKS_FQ2BAM {
 
     input:
     tuple val(meta), val(read_groups), path ( r1_fastq, stageAs: "?/*"), path ( r2_fastq, stageAs: "?/*"), path(interval_file)
-    tuple path(fa), path(fai)
+    tuple path(fasta), path(fai)
     path index 
     path known_sites
 
@@ -47,10 +47,23 @@ process PARABRICKS_FQ2BAM {
     """
 
     INDEX=`find -L ./ -name "*.amb" | sed 's/\\.amb\$//'`
+    # index and fasta need to be in the same dir as files and not symlinks
+    # and have the same base name for pbrun to function
+    # here we copy the index into the staging dir of fasta
+
     echo \$INDEX
-    mv $fa $index/.
-    mv $fai $index/.
-    
+
+    FASTA_PATH=`readlink -f $fasta`
+    echo \$FASTA_PATH
+
+    cp \$INDEX.amb \$FASTA_PATH.amb
+    cp \$INDEX.ann \$FASTA_PATH.ann
+    cp \$INDEX.bwt \$FASTA_PATH.bwt
+    cp \$INDEX.pac \$FASTA_PATH.pac
+    cp \$INDEX.sa \$FASTA_PATH.sa
+
+    ls -l
+
     pbrun \\
         fq2bam \\
         --ref \$INDEX \\
