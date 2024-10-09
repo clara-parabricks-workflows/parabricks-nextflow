@@ -13,7 +13,8 @@ process PARABRICKS_DEEPVARIANT {
 
     output:
     tuple val(meta), path("*.vcf"), emit: vcf
-    path "versions.yml",            emit: versions
+    tuple val(meta), path("*.log"), emit: log
+    path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -26,22 +27,29 @@ process PARABRICKS_DEEPVARIANT {
     }
 
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-    def output_file = args =~ "gvcf" ? "${prefix}.g.vcf" : "${prefix}.vcf"
+    def prefix     = task.ext.suffix ? "${meta.id}${task.ext.suffix}" : "${meta.id}"
+    def output_file = args =~ "gvcf" ? "${prefix}.genome.vcf" : "${prefix}.vcf"
     def interval_file_command = interval_file ? interval_file.collect{"--interval-file $it"}.join(' ') : ""
     def proposed_variants_option = proposed_variants ? "--proposed-variants $proposed_variants" : ""
     def model_file_option = model_file ? "--pb-model-file $model_file" : ""
 
-
     """
+
+    logfile=run.log
+    exec > >(tee \$logfile)
+    exec 2>&1
+
+    echo "pbrun deepvariant --ref $fasta --in-bam $bam --out-variants $output_file --num-gpus $task.accelerator.request $interval_file_command $proposed_variants_option $model_file_option $args"
 
     pbrun \\
         deepvariant \\
         --ref $fasta \\
         --in-bam $bam \\
         --out-variants $output_file \\
-        $interval_file_command \\
         --num-gpus $task.accelerator.request \\
+        $interval_file_command \\
+        $proposed_variants_option \\
+        $model_file_option \\
         $args
 
     cat <<-END_VERSIONS > versions.yml
@@ -53,8 +61,9 @@ process PARABRICKS_DEEPVARIANT {
     stub:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def output_file = args =~ "gvcf" ? "${prefix}.g.vcf" : "${prefix}.vcf"
+    def output_file = args =~ "gvcf" ? "${prefix}.genome.vcf" : "${prefix}.vcf"
     """
+    touch run.log
     touch $output_file
 
     cat <<-END_VERSIONS > versions.yml

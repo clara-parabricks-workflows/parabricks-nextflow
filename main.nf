@@ -83,8 +83,7 @@ workflow {
     )
 
     // construct bam_bai ch, add interval_bed to ch
-    ch_bam_bai = PARABRICKS_FQ2BAM.out.bam
-        .join(PARABRICKS_FQ2BAM.out.bai, by: [0])
+    ch_bam_bai = PARABRICKS_FQ2BAM.out.bam_bai
         .map {meta, bam, bai ->
             def interval_file = params.interval_bed ? file(params.interval_bed, checkIfExists: true) : [] 
             return [meta, bam, bai, interval_file]

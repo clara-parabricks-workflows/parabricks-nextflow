@@ -5,18 +5,18 @@ process PARABRICKS_FQ2BAM {
     container "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
 
     input:
-    tuple val(meta), val(read_groups), path ( r1_fastq, stageAs: "?/*"), path ( r2_fastq, stageAs: "?/*"), path(interval_file)
+    tuple val(meta), val(read_group), path ( r1_fastq, stageAs: "?/*"), path ( r2_fastq, stageAs: "?/*"), path(interval_file)
     tuple path(fasta), path(fai)
     path index 
     path known_sites
 
     output:
-    tuple val(meta), path("*.bam")                , emit: bam
-    tuple val(meta), path("*.bai")                , emit: bai
-    path "versions.yml"                           , emit: versions
-    path "qc_metrics", optional:true              , emit: qc_metrics
-    path("*.table"), optional:true                , emit: bqsr_table
-    path("duplicate-metrics.txt"), optional:true  , emit: duplicate_metrics
+    tuple val(meta), path("*.bam"), path("*.bai") , emit: bam_bai
+    tuple val(meta), path("qc_metrics/*"), optional: true, emit: qc_metrics
+    tuple val(meta), path("*.table"), optional: true, emit: bqsr_table
+    tuple val(meta), path("*.duplicate-metrics.txt"), optional: true, emit: duplicate_metrics
+    tuple val(meta), path("*.log"), emit: log
+    path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -26,25 +26,30 @@ process PARABRICKS_FQ2BAM {
     if (workflow.profile.tokenize(',').intersect(['conda', 'mamba']).size() >= 1) {
         error "Parabricks module does not support Conda. Please use Docker / Singularity / Podman instead."
     }
+
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix     = task.ext.suffix ? "${meta.id}${task.ext.suffix}" : "${meta.id}"    
+    def known_sites_command = known_sites ? (known_sites instanceof List ? known_sites.collect { "--knownSites $it" }.join(' ') : "--knownSites ${known_sites}") : ""
+    def known_sites_output = known_sites ? "--out-recal-file ${prefix}.table" : ""
+    def interval_file_command = interval_file ? (interval_file instanceof List ? interval_file.collect { "--interval-file $it" }.join(' ') : "--interval-file ${interval_file}") : ""
+
+    //Example 2: --in-fq sampleX_1_1.fastq.gz sampleX_1_2.fastq.gz "@RGtID:footLB:lib1tPL:bartSM:sampletPU:unit1" --in-fq sampleX_2_1.fastq.gz sampleX_2_2.fastq.gz "@RGtID:foo2tLB:lib1tPL:bartSM:sampletPU:unit2" (edited) 
 
     def in_fq_command = meta.single_end 
     ? (r1_fastq instanceof List 
         ? r1_fastq.collect { "--in-se-fq $it" }.join(' ') 
         : "--in-se-fq ${r1_fastq}"
       )
-    : (r1_fastq instanceof List && r2_fastq instanceof List
-        ? (r1_fastq.indexed().collect { idx, r1 -> "--in-fq $r1 ${r2_fastq[idx]}" }).join(' ')
-        : "--in-fq ${r1_fastq} ${r2_fastq}"
+    : (r1_fastq instanceof List && r2_fastq instanceof List && read_group instanceof List
+        ? (r1_fastq.indexed().collect { idx, r1 -> "--in-fq $r1 ${r2_fastq[idx]} \"${read_group[idx]}\"" }).join(' ')
+        : "--in-fq ${r1_fastq} ${r2_fastq} ${read_group}"
       )
-
-    def known_sites_command = known_sites ? (known_sites instanceof List ? known_sites.collect { "--knownSites $it" }.join(' ') : "--knownSites ${known_sites}") : ""
-    def known_sites_output = known_sites ? "--out-recal-file ${prefix}.table" : ""
-    def interval_file_command = interval_file ? (interval_file instanceof List ? interval_file.collect { "--interval-file $it" }.join(' ') : "--interval-file ${interval_file}") : ""
-
-
+ 
     """
+
+    logfile=run.log
+    exec > >(tee \$logfile)
+    exec 2>&1
 
     INDEX=`find -L ./ -name "*.amb" | sed 's/\\.amb\$//'`
     # index and fasta need to be in the same dir as files and not symlinks
@@ -62,7 +67,7 @@ process PARABRICKS_FQ2BAM {
     cp \$INDEX.pac \$FASTA_PATH.pac
     cp \$INDEX.sa \$FASTA_PATH.sa
 
-    ls -l
+    echo "pbrun fq2bam --ref \$INDEX $in_fq_command --read-group-sm $meta.id --out-bam ${prefix}.bam --num-gpus $task.accelerator.request $known_sites_command $known_sites_output $interval_file_command --out-qc-metrics-dir qc_metrics $args"
 
     pbrun \\
         fq2bam \\
@@ -70,10 +75,12 @@ process PARABRICKS_FQ2BAM {
         $in_fq_command \\
         --read-group-sm $meta.id \\
         --out-bam ${prefix}.bam \\
+        --num-gpus $task.accelerator.request \\
         $known_sites_command \\
         $known_sites_output \\
         $interval_file_command \\
-        --num-gpus $task.accelerator.request \\
+        --out-qc-metrics-dir qc_metrics \\
+        --out-duplicate-metrics ${prefix}.duplicate-metrics.txt \\
         $args
 
     cat <<-END_VERSIONS > versions.yml
@@ -87,17 +94,33 @@ process PARABRICKS_FQ2BAM {
     if (workflow.profile.tokenize(',').intersect(['conda', 'mamba']).size() >= 1) {
         error "Parabricks module does not support Conda. Please use Docker / Singularity / Podman instead."
     }
+    
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-    def in_fq_command = meta.single_end ? "--in-se-fq $r1_fastq" : "--in-fq $r1_fastq $r2_fastq"
+    def prefix     = task.ext.suffix ? "${meta.id}${task.ext.suffix}" : "${meta.id}"    
     def known_sites_command = known_sites ? (known_sites instanceof List ? known_sites.collect { "--knownSites $it" }.join(' ') : "--knownSites ${known_sites}") : ""
     def known_sites_output = known_sites ? "--out-recal-file ${prefix}.table" : ""
     def interval_file_command = interval_file ? (interval_file instanceof List ? interval_file.collect { "--interval-file $it" }.join(' ') : "--interval-file ${interval_file}") : ""
+
+    def readgroups_string = read_group.collect { rg -> "@RG\\tID:${rg.read_group}__${rg.sample}\\tSM:${rg.sample}\\tPL:${rg.platform}\\tLB:${rg.sample}" }
+
+    def in_fq_command = meta.single_end 
+        ? (r1_fastq instanceof List 
+            ? r1_fastq.collect { "--in-se-fq $it" }.join(' ') 
+            : "--in-se-fq ${r1_fastq}"
+        )
+        : (r1_fastq instanceof List && r2_fastq instanceof List && readgroups_string instanceof List
+            ? (r1_fastq.indexed().collect { idx, r1 -> "--in-fq $r1 ${r2_fastq[idx]} '\"${readgroups_string[idx]}\"'" }).join(' ')
+            : "--in-fq ${r1_fastq} ${r2_fastq} '\"${readgroups_string}\"'"
+        )
 
     def metrics_output_command = args = "--out-duplicate-metrics duplicate-metrics.txt" ? "touch duplicate-metrics.txt" : ""
     def known_sites_output_command = known_sites ? "touch ${prefix}.table" : ""
     def qc_metrics_output_command = args = "--out-qc-metrics-dir qc_metrics " ? "mkdir qc_metrics && touch qc_metrics/alignment.txt" : ""
     """
+
+    echo $in_fq_command
+
+    touch run.log
     touch ${prefix}.bam
     touch ${prefix}.bam.bai
     $metrics_output_command
