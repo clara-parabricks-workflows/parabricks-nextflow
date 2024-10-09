@@ -35,15 +35,17 @@ process PARABRICKS_FQ2BAM {
 
     //Example 2: --in-fq sampleX_1_1.fastq.gz sampleX_1_2.fastq.gz "@RGtID:footLB:lib1tPL:bartSM:sampletPU:unit1" --in-fq sampleX_2_1.fastq.gz sampleX_2_2.fastq.gz "@RGtID:foo2tLB:lib1tPL:bartSM:sampletPU:unit2" (edited) 
 
+    def readgroups_string = read_group.collect { rg -> "@RG\\tID:${rg.read_group}__${rg.sample}\\tSM:${rg.sample}\\tPL:${rg.platform}\\tLB:${rg.sample}" }
+
     def in_fq_command = meta.single_end 
-    ? (r1_fastq instanceof List 
-        ? r1_fastq.collect { "--in-se-fq $it" }.join(' ') 
-        : "--in-se-fq ${r1_fastq}"
-      )
-    : (r1_fastq instanceof List && r2_fastq instanceof List && read_group instanceof List
-        ? (r1_fastq.indexed().collect { idx, r1 -> "--in-fq $r1 ${r2_fastq[idx]} \"${read_group[idx]}\"" }).join(' ')
-        : "--in-fq ${r1_fastq} ${r2_fastq} ${read_group}"
-      )
+        ? (r1_fastq instanceof List 
+            ? r1_fastq.collect { "--in-se-fq $it" }.join(' ') 
+            : "--in-se-fq ${r1_fastq}"
+        )
+        : (r1_fastq instanceof List && r2_fastq instanceof List && readgroups_string instanceof List
+            ? (r1_fastq.indexed().collect { idx, r1 -> "--in-fq $r1 ${r2_fastq[idx]} '\"${readgroups_string[idx]}\"'" }).join(' ')
+            : "--in-fq ${r1_fastq} ${r2_fastq} '\"${readgroups_string}\"'"
+        )
  
     """
 
