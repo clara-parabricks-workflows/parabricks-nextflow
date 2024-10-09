@@ -43,7 +43,7 @@ process PARABRICKS_FQ2BAM {
         )
         : (r1_fastq instanceof List && r2_fastq instanceof List && readgroups_string instanceof List
             ? (r1_fastq.indexed().collect { idx, r1 -> "--in-fq $r1 ${r2_fastq[idx]} '\"${readgroups_string[idx]}\"'" }).join(' ')
-            : "--in-fq ${r1_fastq} ${r2_fastq} '${readgroups_string.join(' ')}'"
+            : "--in-fq ${r1_fastq} ${r2_fastq} '\"${readgroups_string.join(' ')}\"'"
         )
  
     """
@@ -111,7 +111,7 @@ process PARABRICKS_FQ2BAM {
         )
         : (r1_fastq instanceof List && r2_fastq instanceof List && readgroups_string instanceof List
             ? (r1_fastq.indexed().collect { idx, r1 -> "--in-fq $r1 ${r2_fastq[idx]} '\"${readgroups_string[idx]}\"'" }).join(' ')
-            : "--in-fq ${r1_fastq} ${r2_fastq} '${readgroups_string.join(' ')}'"
+            : "--in-fq ${r1_fastq} ${r2_fastq} '\"${readgroups_string.join(' ')}\"'"
         )
 
     def metrics_output_command = args = "--out-duplicate-metrics duplicate-metrics.txt" ? "touch duplicate-metrics.txt" : ""
