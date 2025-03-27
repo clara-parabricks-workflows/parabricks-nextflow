@@ -1,0 +1,3 @@
+sample,read_group,platform,gender,pcr,fastq_1,fastq_2
+20240926-SB-L040-1,20240926,ELEMENT,female,False,s3://elembio-macro-testdata/fastq/trinity-twist-41d16822b1444762be3aa2fd28ba0c6e/20240926-SB-L040-1__25000r/20240926-SB-L040-1_R1.fastq.gz,s3://elembio-macro-testdata/fastq/trinity-twist-41d16822b1444762be3aa2fd28ba0c6e/20240926-SB-L040-1__25000r/20240926-SB-L040-1_R2.fastq.gz
+

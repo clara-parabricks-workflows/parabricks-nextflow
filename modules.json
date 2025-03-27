@@ -1,0 +1,37 @@
+{
+  "name": "",
+  "homePage": "",
+  "repos": {
+    "https://github.com/nf-core/modules.git": {
+      "modules": {
+        "nf-core": {
+          "custom/dumpsoftwareversions": {
+            "branch": "master",
+            "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
+            "installed_by": ["modules"]
+          },
+          "multiqc": {
+            "branch": "master",
+            "git_sha": "b7ebe95761cd389603f9cc0e0dc384c0f663815a",
+            "installed_by": ["modules"]
+          },
+          "parabricks/deepvariant": {
+            "branch": "master",
+            "git_sha": "3e52a04aa60e0cb5cea0487b9ae2fdd04f874027",
+            "installed_by": ["modules"]
+          },
+          "parabricks/fq2bam": {
+            "branch": "master",
+            "git_sha": "3e52a04aa60e0cb5cea0487b9ae2fdd04f874027",
+            "installed_by": ["modules"]
+          },
+          "tabix/bgziptabix": {
+            "branch": "master",
+            "git_sha": "f448e846bdadd80fc8be31fbbc78d9f5b5131a45",
+            "installed_by": ["modules"]
+          }
+        }
+      }
+    }
+  }
+}

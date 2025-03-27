@@ -1,0 +1,2 @@
+sample,read_group,platform,gender,pcr,fastq_1,fastq_2
+20240916-JM-L1112-1,20240916,ELEMENT,female,False,s3://elembio-macro-testdata/fastq/trinity-idt-5e9513ee0bf544b3807afa4fc6c065b2/20240916-JM-L1112-1__25000r/20240916-JM-L1112-1_R1.fastq.gz,s3://elembio-macro-testdata/fastq/trinity-idt-5e9513ee0bf544b3807afa4fc6c065b2/20240916-JM-L1112-1__25000r/20240916-JM-L1112-1_R2.fastq.gz

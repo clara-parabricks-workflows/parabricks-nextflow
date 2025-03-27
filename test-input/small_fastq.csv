@@ -1,0 +1,4 @@
+sample,read_group,platform,gender,pcr,r1_fastq,r2_fastq
+sysDVT-adept-HG001,NIST-001,ELEMENT,female,False,s3://elembio-macro-nvidia/parabricks/fastq/sysDVT-adept-HG001__250000r/sysDVT-adept-HG001_FQD-2x150x150-250000r_R1.fastq.gz,s3://elembio-macro-nvidia/parabricks/fastq/sysDVT-adept-HG001__250000r/sysDVT-adept-HG001_FQD-2x150x150-250000r_R2.fastq.gz
+sysDVT-adept-HG002,NIST-002,ELEMENT,male,False,s3://elembio-macro-nvidia/parabricks/fastq/sysDVT-adept-HG001__250000r/sysDVT-adept-HG001_FQD-2x150x150-250000r_R1.fastq.gz,s3://elembio-macro-nvidia/parabricks/fastq/sysDVT-adept-HG001__250000r/sysDVT-adept-HG001_FQD-2x150x150-250000r_R2.fastq.gz
+sysDVT-adept-HG003,NIST-003,ELEMENT,female,False,s3://elembio-macro-nvidia/parabricks/fastq/sysDVT-adept-HG001__250000r/sysDVT-adept-HG001_FQD-2x150x150-250000r_R1.fastq.gz,s3://elembio-macro-nvidia/parabricks/fastq/sysDVT-adept-HG001__250000r/sysDVT-adept-HG001_FQD-2x150x150-250000r_R2.fastq.gz

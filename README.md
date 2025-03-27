@@ -1,6 +1,8 @@
 # Parabricks NextFlow Workflows 
 
-This repo contains example code for running NVIDIA Parabricks using NextFlow. The examples here are minimal and are meant as a starting point to show users how to connect Parabricks and NextFlow. 
+**THIS PAGE IS UNDER CONSTRUCTION**
+
+This repo contains example code for running NVIDIA Parabricks using NextFlow. The examples here are minimal and are meant as a starting point to show users how to connect Parabricks and NextFlow.  
 
 The two example workflows are: 
 
@@ -15,7 +17,7 @@ The software requirements are:
 
 - Docker
 - nvidia-docker
-- [NextFlow](https://www.nextflow.io/docs/latest/install.html#install-nextflow)
+- [NextFlow](https://www.nextflow.io/docs/latest/install.html#install-nextflow) 22.10.0+
 
 An example dataset with all the necessary files to run these examples can be found at 
 
@@ -25,13 +27,10 @@ The [Parabricks fq2bam tool](https://docs.nvidia.com/clara/parabricks/latest/doc
 
 The `fq2bam.nf` script in this repository demonstrates how to run this tool with a set of input reads, producing a BAM file, its BAI index and a BQSR report for use with HaplotypeCaller.
 
-Below is an example command line for running the `fq2bam.nf` script:
+Running the test:
 
 ```bash
-nextflow run \
-    -c config/local.nf.conf \
-    -params-file example_inputs/test.fq2bam.json \
-    nexflow/fq2bam.nf
+nextflow run . -profile test
 ```
 
 | Input File | Purpose |
